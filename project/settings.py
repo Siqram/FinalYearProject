@@ -84,23 +84,7 @@ WSGI_APPLICATION = 'wsgi.application'
 from . import database
 
 DATABASES = {
-
-    'default': {
-
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-
-        'NAME': 'qcareers',
-
-        'USER': 'admin',
-
-        'PASSWORD': 'admin',
-
-        'HOST': 'localhost',
-
-        'PORT': '',
-
-    }
-
+    'default': database.config()
 }
 
 
