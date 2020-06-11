@@ -84,16 +84,8 @@ WSGI_APPLICATION = 'wsgi.application'
 from . import database
 
 DATABASES = {
-    'default': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'yourproject',
-    'USER': 'yourprojectuser',
-    'PASSWORD': 'password',
-    'HOST': 'localhost',
-    'PORT': '5432',
-    }
+    'default': database.config()
 }
-
 
 
 # Password validation
