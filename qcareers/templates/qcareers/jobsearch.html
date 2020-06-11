@@ -1,0 +1,262 @@
+{% load static %}
+
+<html>
+<head>
+  <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+      <!-- Bootstrap CSS -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+      <link rel="stylesheet" type="text/css" href="{% static 'qcareers/main.css' %}">
+
+      {% block extra_head %}
+            <link rel="stylesheet" type="text/css" href="{% static 'qcareers/jobsearch.css' %}">
+      {% endblock %}
+
+  {% if title %}
+        <title>Qcareers - {{ title }}</title>
+    {% else %}
+        <title>Qcareers</title>
+    {% endif %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+  <style>
+        .badge {
+            padding: 5px 10px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+        }
+        body{
+            overflow-x: hidden;
+        }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+            <div class="container">
+                <a class="navbar-brand mr-4" href="{% url 'qcareers-home' %}">Qcareers</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarToggle">
+                    <div class="navbar-nav mr-auto">
+                        {% if user.is_authenticated == True %}
+                            {% if user.is_superuser %}
+                                <a class="nav-item nav-link" href="{% url 'qcareers-manage-requests-get' %}">Manage Requests  <span id="reqBadge" class="badge">!</span></a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-support-page-for-admins' %}">Support Chat  <span id="chatBadgeForAdmin" class="badge">!</span></a> &nbsp;
+                            {% endif %}
+
+                            {% if user.is_superuser == False %}
+                                <a class="nav-item nav-link" href="{% url 'qcareers-recommend-job' %}">Recommend Job</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-my-recommendations' %}">My Recommendations</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-search-job' %}">Search Job</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-request-admin' %}">Request Admin</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-support-page' %}">Support Chat  <span id="chatBadgeForUser" class="badge">!</span></a> &nbsp;
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Navbar Right Side -->
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser == True %}
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-skills' %}">Manage Skills</a> &nbsp;
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-modules' %}">Manage Modules</a> &nbsp;
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-jobs' %}">Manage Jobs</a> &nbsp;
+                        {% endif %}
+                        <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                        <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                    {% else %}
+                        <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+   </header>
+
+  <div id="top">
+      <h1>Search Jobs</h1> <br/>
+      <div id="top-below-part">
+        <input type="text" placeholder="Enter Job Role" name="keyword" id="keywordInput" value=""> &nbsp; &nbsp;
+        <button type="submit" name="submit" id="searchkeyWord" onclick="">Search</button>
+      </div>
+  </div>
+
+<br>
+
+
+<!-- <div class='card' style='width: 18rem;''>
+  <div class='card-body'>
+    <h5 class='card-title'>Card title</h5>
+    <h6 class='card-subtitle mb-2 text-muted'><lablel class='card-job-title'> software</label></h6>
+    <h6 class='card-subtitle mb-2 text-muted'><label class='card-employer-name'> IBM </label></h6>
+    <h6 class='card-subtitle mb-2 text-muted'><label class='card-location'> London</label></h6>
+    <h6 class='card-subtitle mb-2 text-muted'><label class='card-applications'> 69</label></h6>
+    <h6 class='card-subtitle mb-2 text-muted'><label class='card-description'>coding</label></h6>
+    <h6 class='card-subtitle mb-2 text-muted'><label class='card-expiration-date'> 15/07/2020</label></h6>
+    <a href='' class='card-link'>Job link</a>
+  </div>
+</div> -->
+
+<div class="cards-section">
+</div>
+
+
+
+
+    <div class = "outer-icon-div">
+
+        <div id="icon">
+        </div>
+
+        <p id="iconText">Searching</p>
+
+    </div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+
+
+<script>
+
+    $(document).ready(function(){
+        $(".outer-icon-div").hide();
+
+        //$('#icon').on("animationend", function(){
+            //$(this).css('display', 'none');
+            //$(".outer-icon-div").show();
+            //$(".outer-icon-div").hide();
+        //});
+
+    });
+
+
+
+    function searchJobs(message, myusername,mypass){
+
+      function make_base_auth(user, password) {   var tok = user + ':' + password;   var hash = btoa(tok);   return "Basic " + hash; } 
+
+      var corsURL = "https://cors-anywhere.herokuapp.com/"
+
+      $.ajax({
+      type: 'GET',
+      url: corsURL + 'https://www.reed.co.uk/api/1.0/search?keywords='+message,
+      username: myusername,
+      password: mypass,
+      beforeSend: function (xhr){
+        $(".cards-section").html("");
+        $(".outer-icon-div").show();
+        xhr.setRequestHeader('Authorization', make_base_auth(myusername, mypass));},
+      // auth:(myusername, mypass),
+      success: function(data){
+          $(".outer-icon-div").hide();
+          console.log("Executed 3")
+          var array100Jobs = data.results;
+          var totalNoJobsThereIs = data.totalResults;
+          // console.log(data)
+          // console.log(array100Jobs[0])
+          // console.log("kkkk" + array100Jobs[0].jobTitle)
+
+
+          for(var i=0; i<5; i++){
+            var applicationNumber = array100Jobs[i].applications;
+            var employerName = array100Jobs[i].employerName;
+            var jobTitle = array100Jobs[i].jobTitle;
+            var jobDescription = array100Jobs[i].jobDescription;
+            var locationName = array100Jobs[i].locationName;
+            var expirationDate = array100Jobs[i].expirationDate;
+            var jobURL = array100Jobs[i].jobUrl;
+
+            $(".cards-section").append("&nbsp;&nbsp;<div class='card' style='width: 18rem;'><div class='card-body'><h5 class='card-title'>" + jobTitle + "</h5><h6 class='card-subtitle mb-2 text-muted'>" + employerName + "</h6><h6 class='card-subtitle mb-2 text-muted'><label class='card-location'> " + locationName + "</label></h6><h6 class='card-subtitle mb-2 text-muted'><label class='card-applications'> " + applicationNumber + "</label></h6><h6 class='card-subtitle mb-2 text-muted'><label class='card-description'>" + jobDescription + "</label></h6><h6 class='card-subtitle mb-2 text-muted'><label class='card-expiration-date'> " + expirationDate + "</label></h6><a href='" + jobURL+ "' class='card-link'> Link to Job </a></div></div><br/><br/>");
+          }
+
+
+      },
+      error: function(request,msg,error) {
+        alert('Error !');
+        console.log("Executed 3 alter")
+
+      }
+    });
+    console.log("Executed 4")
+    }
+
+
+    $("#searchkeyWord").click(function(){
+      console.log("Executed 1");
+        var message = $("#keywordInput").val();
+        $("#keywordInput").val('');
+        myusername = "f6136e82-4f49-43a6-bc79-15a85cbaf8f1"
+        mypass = ""
+        console.log("Executed 2")
+        searchJobs(message, myusername,mypass);
+
+
+    });
+
+
+
+</script>
+
+<body>
+</html>
+
+<script>
+    $(document).ready(function(){
+        $("#reqBadge").hide();
+        $("#chatBadgeForAdmin").hide();
+        $("#chatBadgeForUser").hide();
+
+        $.ajax({
+            type: 'GET',
+            url: '/check_for_notifs/',
+            data: {
+                user : "{{ user }}"
+            },
+            success: function(data){
+
+                if(data.userIsAdmin=="true"){
+                    //alert("in admin!");
+
+                    var userIsAdmin = data.userIsAdmin;
+                    var hasReqs = data.hasReqs;
+                    var hasChats = data.hasChats;
+
+                    if(hasReqs=="true"){
+                        $("#reqBadge").show();
+                    }
+                    else $("#reqBadge").hide();
+
+                    if (hasChats=="true") $("#chatBadgeForAdmin").show();
+                    else $("#chatBadgeForAdmin").hide();
+                }
+                else{
+                    var hasChatss = data.hasChatss;
+                    if(hasChatss=="true") $("#chatBadgeForUser").show();
+                    else $("#chatBadgeForUser").hide();
+                }
+
+            },
+            error: function(request,msg,error) {
+              alert('Error !');
+            }
+          });
+      })
+</script>
+
+
+
+
+<!-- import requests
+myusername = "f6136e82-4f49-43a6-bc79-15a85cbaf8f1"
+mypass = ""
+r = requests.get('https://www.reed.co.uk/api/1.0/search?keywords=accountant', auth=(myusername, mypass))
+print(r.text) -->

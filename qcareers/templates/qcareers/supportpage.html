@@ -1,0 +1,16 @@
+{% extends "qcareers/base.html" %}
+
+{% block content %}
+    <h1> Support Page</h1>
+    <p> You can send messages here. All admins will be able to see the messages and reply </p>
+
+    <br/>
+
+    <form action="{% url 'qcareers-support-page' %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Start Chat"> 
+    </form>
+
+
+
+{% endblock %}

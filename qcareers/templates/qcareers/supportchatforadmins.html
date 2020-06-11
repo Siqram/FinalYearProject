@@ -1,0 +1,312 @@
+{% load static %}
+<html>
+<head>
+  <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+      <!-- Bootstrap CSS -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js" > </script>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+      <link rel="stylesheet" type="text/css" href="{% static 'qcareers/main.css' %}">
+
+
+
+  {% if title %}
+        <title>Qcareers - {{ title }}</title>
+    {% else %}
+        <title>Qcareers</title>
+    {% endif %}
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+  <style>
+    .separate{
+        background-color: yellow;
+    }
+
+    .bubbleWrapper {
+        padding: 10px 10px;
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: column;
+        align-self: flex-end;
+        color: black;
+        background-color: white;
+    }
+
+    .inlineContainer {
+        display: inline-flex;
+    }
+
+    .inlineContainer.own {
+        flex-direction: row-reverse;
+    }
+
+    .ownBubble {
+        min-width: 60px;
+        max-width: 700px;
+        padding: 14px 18px;
+        margin: 6px 8px;
+        background-color: orange;
+        border-radius: 16px 16px 0 16px;
+        border: 1px solid #443f56;
+
+    }
+
+    .otherBubble {
+        min-width: 60px;
+        max-width: 700px;
+        padding: 14px 18px;
+        margin: 6px 8px;
+        background-color: cyan;
+        border-radius: 16px 16px 16px 0;
+        border: 1px solid #54788e;
+
+    }
+
+    .own {
+        align-self: flex-end;
+    }
+
+    .other {
+        align-self: flex-start;
+    }
+
+    span.own, span.other{
+        font-size: 14px;
+        color: red;
+    }
+
+    .chat-message {
+        padding: 30px;
+    }
+
+    #message-to-send {
+        width: 100%;
+
+        padding: 10px 20px;
+        font: 14px/22px "Lato", Arial, sans-serif;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        resize: none;
+
+    }
+
+    button {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .main-div{
+        padding: 40px;
+        height: 350px;
+        overflow: scroll;
+    }
+
+    #clearMessageButton{
+        float: right;
+    }
+
+    .badge {
+        padding: 5px 10px;
+        border-radius: 50%;
+        background-color: red;
+        color: white;
+    }
+
+
+  </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+            <div class="container">
+                <a class="navbar-brand mr-4" href="{% url 'qcareers-home' %}">Qcareers</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarToggle">
+                    <div class="navbar-nav mr-auto">
+                        {% if user.is_authenticated == True %}
+                            {% if user.is_superuser %}
+                                <a class="nav-item nav-link" href="{% url 'qcareers-manage-requests-get' %}">Manage Requests  <span id="reqBadge" class="badge">!</span></a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-support-page-for-admins' %}">Support Chat  <span id="chatBadgeForAdmin" class="badge">!</span></a> &nbsp;
+                            {% endif %}
+
+                            {% if user.is_superuser == False %}
+                                <a class="nav-item nav-link" href="{% url 'qcareers-recommend-job' %}">Recommend Job</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-my-recommendations' %}">My Recommendations</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-search-job' %}">Search Job</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-request-admin' %}">Request Admin</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-support-page' %}">Support Chat  <span id="chatBadgeForUser" class="badge">!</span></a> &nbsp;
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Navbar Right Side -->
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser == True %}
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-skills' %}">Manage Skills</a> &nbsp;
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-modules' %}">Manage Modules</a> &nbsp;
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-jobs' %}">Manage Jobs</a> &nbsp;
+                        {% endif %}
+                        <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                        <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                    {% else %}
+                        <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+   </header>
+
+
+    <div class="main-div">
+
+    </div>
+
+    <div class="chat-message clearfix">
+            <center>
+
+                    <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" cols="60" rows="3" required></textarea>
+                    <br/><button id="sendMessageButton">Send</button>
+
+                <form action="{% url 'qcareers-delete-chat' username %}" method="POST">
+                    {% csrf_token %}
+                    <button id="clearMessageButton"> Delete Chat and Exit </button>
+                </form>
+            </center>
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        var numbOfMessagesOnScreen = 0;
+        $(window).bind("load", function(){
+            getMessages();
+
+            refreshTimer = setInterval(getMessages, 1900);
+
+
+        })
+
+        function getMessages(){
+            $.ajax({
+            type: 'GET',
+            url: '/get_messages/',
+            data: {
+                userInv: "{{ username }}"
+            },
+            success: function(data){
+                //console.log(data)
+                //console.log(data.messages[0])
+                var numbOfMessagesFromPost = data.messages.length;
+
+                if (numbOfMessagesOnScreen != numbOfMessagesFromPost && numbOfMessagesOnScreen < numbOfMessagesFromPost ){
+
+                    for (var i=data.messages.length - (numbOfMessagesFromPost - numbOfMessagesOnScreen); i<data.messages.length; i++){
+
+                        if(data.order[i]=="user"){
+                            $(".main-div").append("<div class='bubbleWrapper'> <div class='inlineContainer own'><label>" + data.user + "</label><div class='ownBubble own'>" + data.messages[i] + "</div></div><span class='own'>" + data.times[i] + "</span></div>");
+                            numbOfMessagesOnScreen++;
+                        }
+                        else if (data.order[i]=="admin"){
+                            $(".main-div").append("<div class='bubbleWrapper'> <div class='inlineContainer'> <label> Admin </label> <div class='otherBubble other'>" + data.messages[i] + "</div></div><span class='other'>" + data.times[i] + "</span></div>");
+                            numbOfMessagesOnScreen++;
+                        }
+
+                    }
+                }
+            },
+            error: function(request,msg,error) {
+              console.log('Error !');
+            }
+          });
+        }
+
+
+        $("#sendMessageButton").click(function(){
+            var message = $("#message-to-send").val();
+
+            if (message=="" || message==" "){
+                $.notify("Type a message");
+            }
+            else{
+                var message = $("#message-to-send").val();
+                $("#message-to-send").val('');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/post_message_for_admins/',
+                    data: {
+                        msg: message,
+                        user : "{{ username }}"
+                    },
+                    success: function(data){
+                        //alert("success")
+                    },
+                    error: function(request,msg,error) {
+                        alert('Error !');
+                    }
+                });
+            }
+
+        });
+
+    </script>
+
+
+<body>
+</html>
+
+<script>
+    $(document).ready(function(){
+
+        $("#reqBadge").hide();
+        $("#chatBadgeForAdmin").hide();
+        $("#chatBadgeForUser").hide();
+
+        $.ajax({
+            type: 'GET',
+            url: '/check_for_notifs/',
+            data: {
+                user : "{{ user }}"
+            },
+            success: function(data){
+
+                if(data.userIsAdmin=="true"){
+                    //alert("in admin!");
+
+                    var userIsAdmin = data.userIsAdmin;
+                    var hasReqs = data.hasReqs;
+                    var hasChats = data.hasChats;
+
+                    if(hasReqs=="true"){
+                        $("#reqBadge").show();
+                    }
+                    else $("#reqBadge").hide();
+
+                    if (hasChats=="true") $("#chatBadgeForAdmin").show();
+                    else $("#chatBadgeForAdmin").hide();
+                }
+                else{
+                    var hasChatss = data.hasChatss;
+                    if(hasChatss=="true") $("#chatBadgeForUser").show();
+                    else $("#chatBadgeForUser").hide();
+                }
+
+            },
+            error: function(request,msg,error) {
+              alert('Error !');
+            }
+          });
+      })
+</script>

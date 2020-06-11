@@ -1,0 +1,396 @@
+{% load static %}
+
+<html>
+ <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js" > </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'qcareers/main.css' %}">
+
+    <style>
+
+        .main-container{
+            position: relative;
+            left: 60px;
+            display: flex;
+            padding: 20px;
+
+        }
+
+        .badge {
+          padding: 5px 10px;
+          border-radius: 50%;
+          background-color: red;
+          color: white;
+        }
+
+        #submitButton{
+            position: relative;
+            left: 620px;
+        }
+        h1, h5{
+            position: relative;
+            left: 80px;
+        }
+    </style>
+ </head>
+
+ <body>
+
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+            <div class="container">
+                <a class="navbar-brand mr-4" href="{% url 'qcareers-home' %}">Qcareers</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarToggle">
+                    <div class="navbar-nav mr-auto">
+                        {% if user.is_authenticated == True %}
+                            {% if user.is_superuser %}
+                                <a class="nav-item nav-link" href="{% url 'qcareers-manage-requests-get' %}">Manage Requests  <span id="reqBadge" class="badge">!</span></a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-support-page-for-admins' %}">Support Chat  <span id="chatBadgeForAdmin" class="badge">!</span></a> &nbsp;
+                            {% endif %}
+
+                            {% if user.is_superuser == False %}
+                                <a class="nav-item nav-link" href="{% url 'qcareers-recommend-job' %}">Recommend Job</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-my-recommendations' %}">My Recommendations</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-search-job' %}">Search Job</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-request-admin' %}">Request Admin</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-support-page' %}">Support Chat  <span id="chatBadgeForUser" class="badge">!</span></a> &nbsp;
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Navbar Right Side -->
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser == True %}
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-skills' %}">Manage Skills</a> &nbsp;
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-modules' %}">Manage Modules</a> &nbsp;
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-jobs' %}">Manage Jobs</a> &nbsp;
+                        {% endif %}
+                        <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                        <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                    {% else %}
+                        <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+   </header>
+
+
+    <h1>Job Recomendation </h1>
+    <br>
+
+    <h5>Please select modules and associated skills below followed by entering a grade</h5>
+
+    <form class="job-recommendation-form" action="{% url 'qcareers-recommended-job' %}" method="POST">
+        {% csrf_token %}
+
+        <div class="main-container">
+
+          <div class="module-and-skills-container">
+            <div class = "left-wrapper">
+
+                <div class="module-section1">
+                  <label>Module 1:</label> <br/>
+                  <select id="module-select1" name="module-select1">
+                    {% for module in allModules %}
+                      <option value={{ module.module_name|cut:' ' }}>{{ module.module_name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <br/>
+
+                <div class="skills-section1">
+                  <label>Skills:</label> <br/>
+                  <select id="skills-select1" name="skills-select1" multiple>
+                    <!--{% for skill in skills %} -->
+                      <!--<option value={{ skill.skill_name }}>{{ skill.skill_name }}</option> -->
+                    <!-- {% endfor %} -->
+                  </select>
+                  <br/> Please choose at least 3 skills <br/><br/>
+                </div>
+
+                <div class="grade-section1">
+                  <label> Enter Grade for Module 1 (whole numbers): </label> <br/>
+                  <input type="number" id="grade1" name="grade1" required>
+                </div>
+
+              </div>
+          </div>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+          <br/><br/>
+
+
+
+
+          <div class="module-and-skills-container2">
+            <div class="middle-wrapper">
+
+                <div class="module-section2">
+                  <label>Module 2:</label> <br/>
+                  <select id="module-select2" name="module-select2">
+                    {% for module in allModules %}
+                      <option value={{ module.module_name|cut:' ' }}>{{ module.module_name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <br/>
+
+                <div class="skills-section2">
+                  <label>Skills:</label> <br/>
+                  <select id="skills-select2" name="skills-select2" multiple>
+                  </select>
+                  <br/> Please choose at least 3 skills <br/><br/>
+                </div>
+
+
+
+                <div class="grade-section2">
+                  <label> Enter Grade for Module 2 (whole numbers): </label> <br/>
+                  <input type="number" id="grade2" name="grade2" required>
+                </div>
+
+            </div>
+          </div>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <br/><br/>
+
+
+
+
+          <div class="module-and-skills-container3">
+            <div class="right-wrapper">
+
+                <div class="module-section3">
+                  <label>Module 3: </label> <br/>
+                  <select id="module-select3" name="module-select3">
+                    {% for module in allModules %}
+                      <option value={{ module.module_name|cut:' ' }}>{{ module.module_name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <br/>
+
+                <div class="skills-section3">
+                  <label>Skills:</label> <br/>
+                  <select id="skills-select3" name="skills-select3" multiple>
+                  </select>
+                  <br/> Please choose at least 3 skills <br/><br/>
+                </div>
+
+
+
+                <div class="grade-section3">
+                  <label> Enter Grade for Module 3 (whole numbers): </label> <br/>
+                  <input type="number" id="grade3" name="grade3" required>
+                </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <br/><input id="submitButton" type="submit">
+
+        <label id="chosenModule" name="chosenModule">Select a module: </label>
+
+    </form>
+
+ </body>
+</html>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+
+      $(document).ready(function(){
+          $("#module-select1").prop("selectedIndex", -1);
+          $("#module-select2").prop("selectedIndex", -1);
+          $("#module-select3").prop("selectedIndex", -1);
+
+          $(".skills-section1").hide();
+          $(".skills-section2").hide();
+          $(".skills-section3").hide();
+          $("#chosenModule").hide();
+
+          $(".grade-section1").hide();
+
+
+          //gh
+          $(".module-and-skills-container2").hide();
+          $(".module-and-skills-container3").hide();
+          $("#submitButton").hide();
+
+          $("#skills-select1").change(function(){
+            var length = $('#skills-select1 option:selected').length;
+            if(length >=3  ){
+                $(".module-and-skills-container2").show();
+                var secondLeng = $('#skills-select2 option:selected').length;
+                if(secondLeng >=3 ){
+                    $(".module-and-skills-container3").show();
+                }
+
+                var thirdLeng = $('#skills-select3 option:selected').length;
+                if(thirdLeng <3 ){
+                    $("#submitButton").hide();
+                }
+            }
+            if (length <3 ){
+                $(".module-and-skills-container2").hide();
+                $(".module-and-skills-container3").hide();
+            }
+          })
+
+          $("#skills-select2").change(function(){
+            var length = $('#skills-select2 option:selected').length;
+            if(length >=3  ){
+                $(".module-and-skills-container3").show();
+                var thirdLeng = $('#skills-select3 option:selected').length;
+                //if(thirdLeng >=3 ){
+                //    $("#submitButton").show();
+                //}
+                if(thirdLeng <3 ){
+                    $("#submitButton").hide();
+                }
+            }
+            if (length <3 ){
+                $(".module-and-skills-container3").hide();
+            }
+          })
+
+          $(document).change(function(){
+            var length = $('#skills-select3 option:selected').length;
+            if(length >=3 && $("#skills-select3").is(":visible") ){
+                $("#submitButton").show();
+            }
+            else {
+                $("#submitButton").hide();
+            }
+          })
+          //gh
+
+
+
+
+
+
+          $("#module-select1").change(function (){
+            $("#skills-select1").empty();
+              $(".skills-section1").show();
+              $(".grade-section1").show(); ///////////////// WHAT
+
+              var chosenModuleOption1 = $("#module-select1 option:selected").html();
+              //$("#chosenModule").text(chosenModuleOption);
+
+
+              {% for mod in allModules %}
+
+                  if(chosenModuleOption1=="{{ mod }}"){
+                      {% for sk in mod.skills.all %}
+                          $("#skills-select1").append(new Option("{{ sk }}", "{{ sk }}"));
+                      {% endfor %}
+                  }
+
+              {% endfor %}
+
+          });
+
+
+          $("#module-select2").change(function (){
+            $("#skills-select2").empty();
+              $(".skills-section2").show();
+
+              var chosenModuleOption2 = $("#module-select2 option:selected").html();
+
+              {% for mod in allModules %}
+
+                  if(chosenModuleOption2=="{{ mod }}"){
+                      {% for sk in mod.skills.all %}
+                          $("#skills-select2").append(new Option("{{ sk }}", "{{ sk }}"));
+                      {% endfor %}
+                  }
+
+              {% endfor %}
+
+          });
+
+
+
+
+          $("#module-select3").change(function (){
+            $("#skills-select3").empty();
+              $(".skills-section3").show();
+
+              var chosenModuleOption3 = $("#module-select3 option:selected").html();
+
+              {% for mod in allModules %}
+
+                  if(chosenModuleOption3=="{{ mod }}"){
+                      {% for sk in mod.skills.all %}
+                          $("#skills-select3").append(new Option("{{ sk }}", "{{ sk }}"));
+                      {% endfor %}
+                  }
+
+              {% endfor %}
+
+          });
+
+
+    });
+
+    </script>
+
+<script>
+    $(document).ready(function(){
+        $("#reqBadge").hide();
+        $("#chatBadgeForAdmin").hide();
+        $("#chatBadgeForUser").hide();
+
+        $.ajax({
+            type: 'GET',
+            url: '/check_for_notifs/',
+            data: {
+                user : "{{ user }}"
+            },
+            success: function(data){
+
+                if(data.userIsAdmin=="true"){
+                    //alert("in admin!");
+
+                    var userIsAdmin = data.userIsAdmin;
+                    var hasReqs = data.hasReqs;
+                    var hasChats = data.hasChats;
+
+                    if(hasReqs=="true"){
+                        $("#reqBadge").show();
+                    }
+                    else $("#reqBadge").hide();
+
+                    if (hasChats=="true") $("#chatBadgeForAdmin").show();
+                    else $("#chatBadgeForAdmin").hide();
+                }
+                else{
+                    var hasChatss = data.hasChatss;
+                    if(hasChatss=="true") $("#chatBadgeForUser").show();
+                    else $("#chatBadgeForUser").hide();
+                }
+
+            },
+            error: function(request,msg,error) {
+              alert('Error !');
+            }
+          });
+      })
+</script>

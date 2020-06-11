@@ -1,0 +1,56 @@
+{% extends "qcareers/base.html" %}
+{% load static %}
+
+{% block extra_head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'qcareers/recommendedjob1.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+    <div id="main">
+        <h1> Recommended Jobs: </h1>
+        <ol>
+            {% for job in recommendedJobsList|slice:":3" %}
+            <li> {{ job }} </li>
+            {% endfor %}
+
+        </ol>
+
+    </div>
+
+    <div class = "outer-icon-div">
+
+        <div id="icon"> 
+        </div>
+
+        <p id="iconText">Recommending </p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $("#main").hide();
+          
+        $('#icon').on("animationend", function(){
+            //$(this).css('display', 'none');
+            $("#main").show();
+            $(".outer-icon-div").hide();
+        });
+
+        /*$(".outer-icon-div").one("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
+              function(event) {
+                  alert("ghana");
+            }
+        );*/
+
+          
+
+          
+    });
+    </script>
+    
+{% endblock content %}
+

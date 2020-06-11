@@ -1,0 +1,8 @@
+{% extends "qcareers/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <h1>{{ user.username }}</h1>
+
+  <br><input type="submit" id="uploadCV" name="uploadCV" value="Upload CV">
+
+{% endblock content %}

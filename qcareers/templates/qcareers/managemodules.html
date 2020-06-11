@@ -1,0 +1,179 @@
+{% load static %}
+<html>
+ <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js" > </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'qcareers/main.css' %}">
+
+    <style>
+        h1{
+            position: relative;
+            left: 60px;
+        }
+        .main{
+            position: relative;
+            left: 60px;
+        }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+        }
+        body{
+            overflow-x: hidden;
+        }
+    </style>
+ </head>
+
+ <body>
+
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+            <div class="container">
+                <a class="navbar-brand mr-4" href="{% url 'qcareers-home' %}">Qcareers</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarToggle">
+                    <div class="navbar-nav mr-auto">
+                        {% if user.is_authenticated == True %}
+                            {% if user.is_superuser %}
+                                <a class="nav-item nav-link" href="{% url 'qcareers-manage-requests-get' %}">Manage Requests  <span id="reqBadge" class="badge">!</span></a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-support-page-for-admins' %}">Support Chat  <span id="chatBadgeForAdmin" class="badge">!</span></a> &nbsp;
+                            {% endif %}
+
+                            {% if user.is_superuser == False %}
+                                <a class="nav-item nav-link" href="{% url 'qcareers-recommend-job' %}">Recommend Job</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-my-recommendations' %}">My Recommendations</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-search-job' %}">Search Job</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-request-admin' %}">Request Admin</a> &nbsp;
+                                <a class="nav-item nav-link" href="{% url 'qcareers-support-page' %}">Support Chat  <span id="chatBadgeForUser" class="badge">!</span></a> &nbsp;
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Navbar Right Side -->
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser == True %}
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-skills' %}">Manage Skills</a> &nbsp;
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-modules' %}">Manage Modules</a> &nbsp;
+                            <a class="nav-item nav-link" href="{% url 'qcareers-manage-jobs' %}">Manage Jobs</a> &nbsp;
+                        {% endif %}
+                        <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                        <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                    {% else %}
+                        <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+   </header>
+
+    <h1> Manage Modules </h1> <br/>
+    <form class="manage-modules-form" action="{% url 'qcareers-manage-modules' %}" method="POST">
+        {% csrf_token %}
+
+        <div class="main">
+            <h4> Add a New Module </h4>
+            <label>Module Name: </label> <br/>
+            <input type="text" placeholder="Enter Module" id="moduleName" name="moduleName">
+
+            <br/><br/>
+            <label>Select the Skills Associated with the Module: </label> <br/>
+            <select id="skillsSelect" name="skillsSelect" multiple>
+                {% for skill in skills %}
+                    <option value={{ skill.skill_name|cut:' ' }}>{{ skill.skill_name }}</option>
+                {% endfor %}
+            </select>
+
+            <br/><br/><input type="submit" name="addModuleButton"  value="Add Module"> <br/>
+
+
+
+
+            <br/><hr> <br/>
+
+
+
+
+            <h4> Delete a Module </h4>
+            <select id="modulesSelect" name="modulesSelect">
+                {% for module in modules %}
+                    <option value={{ module.module_name|cut:' ' }}>{{ module.module_name }}</option>
+                {% endfor %}
+            </select>
+            <br/> <br/>
+            <input type="submit" name="deleteModuleButton"  value="Delete Module">
+            <br/><br/>
+        <div>
+
+
+    </form>
+
+ <body>
+</html>
+
+<script>
+    $(document).ready(function(){
+        $("#reqBadge").hide();
+        $("#chatBadgeForAdmin").hide();
+        $("#chatBadgeForUser").hide();
+
+        $.ajax({
+            type: 'GET',
+            url: '/check_for_notifs/',
+            data: {
+                user : "{{ user }}"
+            },
+            success: function(data){
+
+                if(data.userIsAdmin=="true"){
+                    //alert("in admin!");
+
+                    var userIsAdmin = data.userIsAdmin;
+                    var hasReqs = data.hasReqs;
+                    var hasChats = data.hasChats;
+
+                    if(hasReqs=="true"){
+                        $("#reqBadge").show();
+                    }
+                    else $("#reqBadge").hide();
+
+                    if (hasChats=="true") $("#chatBadgeForAdmin").show();
+                    else $("#chatBadgeForAdmin").hide();
+                }
+                else{
+                    var hasChatss = data.hasChatss;
+                    if(hasChatss=="true") $("#chatBadgeForUser").show();
+                    else $("#chatBadgeForUser").hide();
+                }
+
+            },
+            error: function(request,msg,error) {
+              alert('Error !');
+            }
+          });
+      })
+</script>
+
+
+<script>
+    $(document).ready(function(){
+        if ("{{ state }}" =='success-add'){
+            $.notify("{{ outcome }}", "");
+        }
+
+        else if ("{{ state }}" =='success-delete'){
+            $.notify("{{ outcomeDeleted }}", "");
+        }
+
+        else if ("{{ state }}" =='fail-add'){
+            $.notify("{{ outcome }}");
+        }
+    })
+</script>

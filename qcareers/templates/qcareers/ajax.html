@@ -1,0 +1,73 @@
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
+  <style>
+    
+  </style>
+</head>
+<body>
+  <a class="nav-item nav-link" href="{% url 'qcareers-home' %}">Home</a>
+
+    <h1> ajax page </h1>
+    <button id="button"> click </button>
+
+    <script>
+      $(function() {    
+        $('#button').click(function(e){
+          console.log("clicked  !!")
+
+          $.ajax({
+            type: 'GET',
+            url: '/data/',
+            data: {
+              pName: "popo"
+            },
+            success: function(data){
+              alert(data.id);
+            },
+            error: function(request,msg,error) {
+              alert('Error, POST was unsuccessful');
+            }
+          });
+      });
+      
+    });
+    </script>
+
+<body>
+</html>
+
+
+<!--
+
+{% block contentx %}
+    <h1> ajax page </h1>
+    <button id="button"> click </button>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+      $(document).ready(function(){
+          console.log("here");
+          
+          $("#button").click(function(){
+
+              console.log("clicked !");
+
+              $.ajax({
+                type: 'GET',
+                url: '/data',
+                success: function(data){
+                    alert(data.co);
+                    console.log("success");
+                    
+                }
+            });
+          })
+      })
+    </script>
+
+{% endblock %}
+
+
+
+

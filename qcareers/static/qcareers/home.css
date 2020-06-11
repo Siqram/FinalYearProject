@@ -1,0 +1,26 @@
+.main{
+    display: flex;
+}
+.picture{
+    position: relative; 
+    left: 100px;
+}
+
+.info{
+    position: relative;
+    left: 60px;
+}
+
+h1{
+    position: relative;
+    left: 60px;
+}
+
+iframe{
+    position: relative;
+    left: 60px;
+}
+
+body{
+    overflow-x: hidden;
+}

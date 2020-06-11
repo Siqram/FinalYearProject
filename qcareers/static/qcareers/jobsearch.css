@@ -1,0 +1,74 @@
+#bit{
+    color: red;
+}
+
+#icon{
+    position: fixed; /* or absolute */
+    top: 40%;
+    left: 44%;
+    margin: auto;
+    border: 16px solid #bdc3c7;
+    width: 220px;
+    height: 220px;
+    border-top-color: #1abc9c;
+    border-bottom-color: #3498db;
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+}
+
+#iconText{
+    position: fixed;
+    top: 53%;
+    left: 49%;
+    font-size: 17px;
+    animation: textAnim 2s linear infinite;
+}
+
+@keyframes spin{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes textAnim {
+    0%{
+        transform: scale(1)
+    }
+    50%{
+        transform: scale(2);
+    }
+    100%{
+        transform: scale(1);
+    }
+}
+
+
+
+.cards-section{
+    display: flex;
+    padding: 20px;
+}
+
+#top{
+    position: relative;
+    left: 70px;
+}
+
+
+/*#top{
+    margin: 0 auto;
+     width:35%;
+}
+
+#top h1 {
+    margin: 0 auto;
+    width: fit-content;
+}
+
+#top-below-part {
+    margin: 0 auto;
+    width: fit-content;
+}*/

@@ -1,0 +1,22 @@
+{% extends "qcareers/base.html" %}
+
+{% block content %}
+    <h1> Support Page</h1>
+    <br/>
+    <h5> List of active chats: </h5>
+    <br/>
+    <ul>
+
+    {% for user in usersList %}
+        <li> <a href="{% url 'qcareers-support-chat-for-admins' user.id %}"> {{ user.username }} </a> </li>
+    {% empty %}
+        <p> No active chats :) </p>
+    {% endfor %}
+
+    </ul>
+
+
+
+
+
+{% endblock %}
